@@ -56,26 +56,6 @@ def calc_cls_loss(pred: torch.Tensor, test: torch.Tensor) -> torch.Tensor:
     loss = (loss_pos + loss_neg) * 0.5
     # loss = loss_pos
     return loss
-
-def calc_cls_loss_matcher(pred: torch.Tensor, test: torch.Tensor) -> torch.Tensor:
-    """Compute classification loss.
-
-    :param pred: Predicted confidence (0-1). Sized [N, S].
-    :param test: Class label where 1 marks positive, -1 marks negative, and 0
-        marks ignored. Sized [N, S].
-    :return: Scalar loss value.
-    """
-    import ipdb; ipdb.set_trace()
-    pred = pred.view(-1)
-    test = test.view(-1)
-    import ipdb; ipdb.set_trace()
-    pos_idx = test.eq(1).nonzero().squeeze(-1)
-    pred_pos = pred[pos_idx].unsqueeze(-1)
-    pred_pos = torch.cat([1 - pred_pos, pred_pos], dim=-1)
-    gt_pos = torch.ones(pred_pos.shape[0], dtype=torch.long, device=pred.device)
-    loss_pos = F.nll_loss(pred_pos.log(), gt_pos)
-
-    neg_idx = test.eq(-1).nonzero().squeeze(-1)
     pred_neg = pred[neg_idx].unsqueeze(-1)
     pred_neg = torch.cat([1 - pred_neg, pred_neg], dim=-1)
     gt_neg = torch.zeros(pred_neg.shape[0], dtype=torch.long,
